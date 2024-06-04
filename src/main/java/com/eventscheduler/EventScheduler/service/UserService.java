@@ -38,6 +38,6 @@ public class UserService {
     }
 
     public void deleteUser(String id) {
-        return userRepository.deleteById(id);
+        userRepository.deleteById(id);
     }
 }
