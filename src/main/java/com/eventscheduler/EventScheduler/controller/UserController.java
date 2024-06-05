@@ -45,4 +45,10 @@ public class UserController {
     public void deleteUser(@PathVariable String id) {
         userService.deleteUser(id);
     }
+
+    @Operation(summary = "Adds an event for a User")
+    @PostMapping("/{userId}/events/{eventId}")
+    public User addEventToUser(@PathVariable String userId, @PathVariable String eventId) {
+        return userService.addEventToUser(userId, eventId);
+    }
 }

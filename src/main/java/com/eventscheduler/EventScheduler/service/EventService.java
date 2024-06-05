@@ -41,4 +41,15 @@ public class EventService {
         }
         eventRepository.deleteById(id);
     }
+
+    public Event addUserToEvent(String eventId, String userId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new RuntimeException("Event not found"));
+        List<String> userIds = event.getUserIds();
+        if (!userIds.contains(userId)) {
+            userIds.add(userId);
+            event.setUserIds(userIds);
+            eventRepository.save(event);
+        }
+        return event;
+    }
 }

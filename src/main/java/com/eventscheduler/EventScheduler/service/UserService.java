@@ -40,4 +40,15 @@ public class UserService {
     public void deleteUser(String id) {
         userRepository.deleteById(id);
     }
+
+    public User addEventToUser(String userId, String eventId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        List<String> eventIds = user.getEventIds();
+        if (!eventIds.contains(eventId)) {
+            eventIds.add(eventId);
+            user.setEventIds(eventIds);
+            userRepository.save(user);
+        }
+        return user;
+    }
 }

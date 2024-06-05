@@ -45,4 +45,10 @@ public class EventController {
     public void deleteEvent(@PathVariable String id) {
         eventService.deleteEvent(id);
     }
+
+    @Operation(summary = "Adds a user to an Event")
+    @PostMapping("/{eventId}/users/{userId}")
+    public Event addUserToEvent(@PathVariable String eventId, @PathVariable String userId) {
+        return eventService.addUserToEvent(eventId, userId);
+    }
 }
