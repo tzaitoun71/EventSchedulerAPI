@@ -12,6 +12,7 @@ import java.util.List;
 public class Event {
     @Id
     private String id;
+    private String hostId;
     private String name;
     private LocalDateTime dateTime;
     private List<String> userIds;

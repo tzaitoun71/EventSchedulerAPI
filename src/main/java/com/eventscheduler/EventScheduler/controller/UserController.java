@@ -2,9 +2,14 @@ package com.eventscheduler.EventScheduler.controller;
 
 import com.eventscheduler.EventScheduler.model.User;
 import com.eventscheduler.EventScheduler.service.UserService;
+import com.eventscheduler.EventScheduler.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +20,30 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Operation(summary = "Signup a new User")
+    @PostMapping("/signup")
+    public User signup(@RequestBody User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userService.createUser(user);
+    }
+
+    @Operation(summary = "Sign in a User")
+    @PostMapping("/signin")
+    public String signin(@RequestBody User user) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+        final UserDetails userDetails = userService.loadUserByUsername(user.getUsername());
+        return jwtUtil.generateToken(userDetails);
+    }
 
     @Operation(summary = "Create a new User")
     @PostMapping

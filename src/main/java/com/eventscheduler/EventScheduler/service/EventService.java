@@ -42,6 +42,10 @@ public class EventService {
         eventRepository.deleteById(id);
     }
 
+    public List<Event> getEventsByHostId(String hostId) {
+            return eventRepository.findAllByHostId(hostId);
+    }
+
     public Event addUserToEvent(String eventId, String userId) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new RuntimeException("Event not found"));
         List<String> userIds = event.getUserIds();

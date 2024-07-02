@@ -51,4 +51,10 @@ public class EventController {
     public Event addUserToEvent(@PathVariable String eventId, @PathVariable String userId) {
         return eventService.addUserToEvent(eventId, userId);
     }
+
+    @Operation(summary = "Gets all events depending on User ID")
+    @GetMapping("/{hostId}")
+    public List<Event> getEventsByHostId(@PathVariable String hostId) {
+        return eventService.getEventsByHostId(hostId);
+    }
 }
