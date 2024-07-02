@@ -3,6 +3,7 @@ package com.eventscheduler.EventScheduler.controller;
 import com.eventscheduler.EventScheduler.model.Event;
 import com.eventscheduler.EventScheduler.service.EventService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.List;
 @Tag(name = "Event")
 @RestController
 @RequestMapping("/events")
+@SecurityRequirement(name = "bearerAuth")
 public class EventController {
     @Autowired
     private EventService eventService;
