@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,5 +16,6 @@ public class Event {
     private String hostId;
     private String name;
     private LocalDateTime dateTime;
+    private Double eventDuration;
     private List<String> userIds;
 }
