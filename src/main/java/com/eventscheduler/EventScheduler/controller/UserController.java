@@ -1,11 +1,14 @@
 package com.eventscheduler.EventScheduler.controller;
 
+import com.eventscheduler.EventScheduler.dto.UserRequest;
+import com.eventscheduler.EventScheduler.dto.SigninRequest;
 import com.eventscheduler.EventScheduler.model.User;
 import com.eventscheduler.EventScheduler.service.UserService;
 import com.eventscheduler.EventScheduler.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Tag(name = "User")
@@ -34,24 +38,25 @@ public class UserController {
 
     @Operation(summary = "Signup a new User")
     @PostMapping("/signup")
-    public User signup(@RequestBody User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    public User signup(@RequestBody UserRequest userRequest) {
+        User user = new User();
+        user.setUsername(userRequest.getUsername());
+        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        user.setFirstName(userRequest.getFirstName());
+        user.setLastName(userRequest.getLastName());
+        user.setEventIds(new ArrayList<>());
+
         return userService.createUser(user);
     }
 
     @Operation(summary = "Sign in a User")
     @PostMapping("/signin")
-    public String signin(@RequestBody User user) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-        final UserDetails userDetails = userService.loadUserByUsername(user.getUsername());
+    public String signin(@RequestBody SigninRequest signinRequest) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signinRequest.getUsername(), signinRequest.getPassword()));
+        final UserDetails userDetails = userService.loadUserByUsername(signinRequest.getUsername());
         return jwtUtil.generateToken(userDetails);
     }
 
-    @Operation(summary = "Create a new User")
-    @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
-    }
 
     @Operation(summary = "Get all users")
     @GetMapping
@@ -67,8 +72,18 @@ public class UserController {
 
     @Operation(summary = "Update an existing user")
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable String id, @RequestBody User user) {
-        return userService.updateUser(id, user);
+    public User updateUser(@PathVariable String id, @Valid @RequestBody UserRequest userRequest) {
+        User existingUser = userService.getUserById(id);
+        if (existingUser == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        existingUser.setUsername(userRequest.getUsername());
+        existingUser.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        existingUser.setFirstName(userRequest.getFirstName());
+        existingUser.setLastName(userRequest.getLastName());
+
+        return userService.updateUser(id, existingUser);
     }
 
     @Operation(summary = "Delete an existing user")
