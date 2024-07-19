@@ -1,6 +1,8 @@
 package com.eventscheduler.EventScheduler.service;
 
+import com.eventscheduler.EventScheduler.model.Event;
 import com.eventscheduler.EventScheduler.model.User;
+import com.eventscheduler.EventScheduler.repository.EventRepository;
 import com.eventscheduler.EventScheduler.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +17,9 @@ import java.util.List;
 public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EventRepository eventRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -50,14 +55,21 @@ public class UserService implements UserDetailsService {
     }
 
     public void deleteUser(String id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        List<Event> events = eventRepository.findAllByUserIdsContains(id);
+
+        for (Event event : events) {
+            event.getUserIds().remove(id);
+            eventRepository.save(event);
+        }
         userRepository.deleteById(id);
     }
 
-    public User addEventToUser(String userId, String eventId) {
+    public User removeEvent(String eventId, String userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         List<String> eventIds = user.getEventIds();
-        if (!eventIds.contains(eventId)) {
-            eventIds.add(eventId);
+        if (eventIds.contains(eventId)) {
+            eventIds.remove(eventId);
             user.setEventIds(eventIds);
             userRepository.save(user);
         }

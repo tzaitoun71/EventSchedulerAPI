@@ -11,4 +11,5 @@ public interface EventRepository extends MongoRepository<Event, String> {
     Optional<Event> findByNameAndDateTime(String name, LocalDateTime dateTime);
 
     List<Event> findAllByHostId(String hostId);
+    List<Event> findAllByUserIdsContains(String userId);
 }
