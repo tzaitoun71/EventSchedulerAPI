@@ -1,5 +1,6 @@
 package com.eventscheduler.EventScheduler.dto;
 
+import com.eventscheduler.EventScheduler.model.Visibility;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -13,4 +14,6 @@ public class EventRequest {
     private LocalDateTime dateTime;
     @NotBlank
     private Double eventDuration;
+    @NotBlank
+    private Visibility visibility = Visibility.CLOSED;
 }

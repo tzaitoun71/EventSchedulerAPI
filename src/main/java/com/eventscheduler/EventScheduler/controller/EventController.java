@@ -3,6 +3,7 @@ package com.eventscheduler.EventScheduler.controller;
 import com.eventscheduler.EventScheduler.dto.EventRequest;
 import com.eventscheduler.EventScheduler.model.Event;
 import com.eventscheduler.EventScheduler.model.User;
+import com.eventscheduler.EventScheduler.model.Visibility;
 import com.eventscheduler.EventScheduler.service.EventService;
 import com.eventscheduler.EventScheduler.service.UserService;
 import com.eventscheduler.EventScheduler.util.JwtUtil;
@@ -11,10 +12,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +43,7 @@ public class EventController {
         event.setDateTime(eventRequest.getDateTime());
         event.setEventDuration(eventRequest.getEventDuration());
         event.setUserIds(new ArrayList<>());
+        event.setVisibility(eventRequest.getVisibility() != null ? eventRequest.getVisibility() : Visibility.CLOSED);
 
         return eventService.createEvent(event);
     }
@@ -80,7 +79,7 @@ public class EventController {
     }
 
     @Operation(summary = "Gets all events depending on User ID")
-    @GetMapping("/{hostId}")
+    @GetMapping("/host/{hostId}")
     public List<Event> getEventsByHostId(@PathVariable String hostId) {
         return eventService.getEventsByHostId(hostId);
     }

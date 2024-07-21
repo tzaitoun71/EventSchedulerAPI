@@ -39,6 +39,7 @@ public class EventService {
         existingEvent.setName(event.getName());
         existingEvent.setDateTime(event.getDateTime());
         existingEvent.setUserIds(event.getUserIds());
+        existingEvent.setVisibility(event.getVisibility());
         return eventRepository.save(event);
     }
 

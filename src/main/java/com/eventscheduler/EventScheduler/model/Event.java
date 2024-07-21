@@ -18,4 +18,5 @@ public class Event {
     private LocalDateTime dateTime;
     private Double eventDuration;
     private List<String> userIds;
+    private Visibility visibility = Visibility.CLOSED;
 }
